@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование устройств</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            min-height: 90vh;
+            border: 1px solid #444;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            color: white;
+            padding: 30px 20px;
+            border-right: 2px solid #444;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #e74c3c;
+            font-size: 1.5em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            margin: 12px 0;
+            background: linear-gradient(145deg, #404040, #383838);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: #e0e0e0;
+            font-size: 16px;
+            text-align: left;
+            width: 100%;
+            border: 1px solid #555;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .nav-item:hover {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            transform: translateX(8px);
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(145deg, #27ae60, #229954);
+            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
+        }
+
+        .external-link {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            margin-top: 40px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .external-link:hover {
+            background: linear-gradient(145deg, #2980b9, #21618c);
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            background: #1e1e1e;
+            overflow-y: auto;
+        }
+
+        .test-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .test-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.8em;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .test-area {
+            background: linear-gradient(145deg, #2a2a2a, #333);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            margin-bottom: 25px;
+            border: 1px solid #444;
+        }
+
+        h2 {
+            color: #f39c12;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Стили клавиатуры как в примере */
+        .keyboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 6px;
+            justify-content: space-between;
+        }
+
+        .keyboard-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mini-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .right {
+            display: flex;
+            gap: 6px;
+        }
+
+        .kk-key {
+            background: #404040;
+            border: 2px solid #555;
+            border-radius: 6px;
+            padding: 12px 8px;
+            min-width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e0e0e0;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .kk-key:hover {
+            background: #4a4a4a;
+        }
+
+        .kk-key.pressed {
+            background: #27ae60 !important;
+            border-color: #2ecc71 !important;
+            transform: translateY(2px);
+        }
+
+        .kk-key.tested {
+            background: #f39c12 !important;
+            border-color: #f1c40f !important;
+        }
+
+        .kk-key.large {
+            min-width: 70px;
+        }
+
+        .kk-key.backspace {
+            min-width: 100px;
+        }
+
+        .kk-key.tab {
+            min-width: 80px;
+        }
+
+        .kk-key.enter {
+            min-width: 90px;
+        }
+
+        .kk-key.shift {
+            min-width: 120px;
+        }
+
+        .kk-key.spacebar {
+            min-width: 300px;
+            background: #505050;
+        }
+
+        .kk-key.num-large {
+            min-width: 70px;
+            height: 110px;
+        }
+
+        .empty-group {
+            min-width: 60px;
+        }
+
+        .kk-key.key-empty {
+            background: transparent;
+            border: 2px dashed #555;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Стили для теста мыши (как на djinn.ru) */
+        .mouse-test-area {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            border: 3px solid #444;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .mouse-visual {
+            width: 200px;
+            height: 300px;
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
+
+        .mouse-button {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mouse-button.pressed {
+            background: #27ae60 !important;
+            transform: translateY(2px);
+        }
+
+        .mouse-left {
+            width: 50px;
+            height: 70px;
+            background: #777;
+            border-radius: 20px 0 0 20px;
+            top: 30px;
+            left: 50px;
+        }
+
+        .mouse-right {
+            width: 50px;
+            height: 70px;
+            background: #777;
+            border-radius: 0 20px 20px 0;
+            top: 30px;
+            left: 150px;
+        }
+
+        .mouse-middle {
+            width: 30px;
+            height: 40px;
+            background: #888;
+            border-radius: 5px;
+            top: 50px;
+            left: 110px;
+            z-index: 2;
+        }
+
+        .mouse-side {
+            width: 15px;
+            height: 40px;
+            background: #666;
+            border-radius: 5px;
+            position: absolute;
+            left: 25px;
+            top: 100px;
+        }
+
+        .mouse-side2 {
+            width: 15px;
+            height: 40px;
+            background: #666;
+            border-radius: 5px;
+            position: absolute;
+            left: 25px;
+            top: 50px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+            color: #e74c3c;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .mouse-stats {
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #444;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stat-value {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .mouse-button-ui {
+            padding: 15px 30px;
+            margin: 10px;
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .mouse-button-ui:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        .mouse-button-ui.pressed {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            transform: translateY(2px);
+        }
+
+        /* Стили для теста микрофона и наушников */
+        .microphone-test, .audio-test {
+            text-align: center;
+        }
+
+        .mic-visualizer {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            border-radius: 15px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #444;
+        }
+
+        .mic-level {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
+            width: 0%;
+            transition: width 0.1s ease;
+            border-radius: 13px;
+        }
+
+        .mic-button, .audio-button {
+            padding: 18px 45px;
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .mic-button:hover, .audio-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(231, 76, 60, 0.6);
+        }
+
+        .mic-button.listening {
+            background: linear-gradient(145deg, #27ae60, #229954);
+            animation: pulse 1s infinite;
+        }
+
+        .audio-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin: 35px 0;
+        }
+
+        .audio-button.left {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+        }
+
+        .audio-button.right {
+            background: linear-gradient(145deg, #27ae60, #229954);
+        }
+
+        .audio-button.mono {
+            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+        }
+
+        .volume-control {
+            width: 100%;
+            margin: 25px 0;
+            background: #34495e;
+            border-radius: 10px;
+            height: 12px;
+        }
+
+        .status {
+            padding: 18px;
+            margin: 15px 0;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid;
+        }
+
+        .status.success {
+            background: linear-gradient(145deg, #27ae60, #229954);
+            color: white;
+            border-color: #2ecc71;
+        }
+
+        .status.error {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+            border-color: #ec7063;
+        }
+
+        .status.info {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+            border-color: #5dade2;
+        }
+
+        .test-instruction {
+            color: #bdc3c7;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Тестирование Устройств</h2>
+            <button class="nav-item active" onclick="showTest('keyboard')">🎮 Клавиатура</button>
+            <button class="nav-item" onclick="showTest('mouse')">🖱️ Мышь</button>
+            <button class="nav-item" onclick="showTest('microphone')">🎤 Микрофон</button>
+            <button class="nav-item" onclick="showTest('headphones')">🎧 Наушники</button>
+            <a href="https://2ip.ru" target="_blank" class="nav-item external-link">
+                🌐 Перейти на 2ip.ru
+            </a>
+        </div>
+
+        <div class="content">
+            <h1>Тестирование Устройств</h1>
+            
+            <!-- Тест клавиатуры -->
+            <div id="keyboard" class="test-section active">
+                <div class="test-area">
+                    <h2>Тест клавиатуры</h2>
+                    <p class="test-instruction">Нажимайте клавиши на клавиатуре. Нажатые клавиши подсвечиваются зеленым, проверенные - оранжевым.</p>
+                    
+                    <div class="keyboard-container">
+                        <div class="keyboard">
+                            <!-- 1st row -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-group">
+                                    <kbd data-key="27" class="kk-key">Esc</kbd>
+                                    <div class="mini-group">
+                                        <kbd data-key="112" class="kk-key">F1</kbd>
+                                        <kbd data-key="113" class="kk-key">F2</kbd>
+                                        <kbd data-key="114" class="kk-key">F3</kbd>
+                                        <kbd data-key="115" class="kk-key">F4</kbd>
+                                    </div>
+                                    <div class="mini-group">
+                                        <kbd data-key="116" class="kk-key">F5</kbd>
+                                        <kbd data-key="117" class="kk-key">F6</kbd>
+                                        <kbd data-key="118" class="kk-key">F7</kbd>
+                                        <kbd data-key="119" class="kk-key">F8</kbd>
+                                    </div>
+                                    <div class="mini-group">
+                                        <kbd data-key="120" class="kk-key">F9</kbd>
+                                        <kbd data-key="121" class="kk-key">F10</kbd>
+                                        <kbd data-key="122" class="kk-key">F11</kbd>
+                                        <kbd data-key="123" class="kk-key">F12</kbd>
+                                    </div>
+                                </div>
+                                <div class="right">
+                                    <div class="keyboard-group">
+                                        <kbd data-key="44" class="kk-key">Prt Sc</kbd>
+                                        <kbd data-key="145" class="kk-key">Scr Lk</kbd>
+                                        <kbd data-key="19" class="kk-key">Pause</kbd>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 2nd row -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-group">
+                                    <kbd data-key="192" class="kk-key large">~</kbd>
+                                    <kbd data-key="49" class="kk-key">!<span>1</span></kbd>
+                                    <kbd data-key="50" class="kk-key">@<span>2</span></kbd>
+                                    <kbd data-key="51" class="kk-key">#<span>3</span></kbd>
+                                    <kbd data-key="52" class="kk-key">$<span>4</span></kbd>
+                                    <kbd data-key="53" class="kk-key">%<span>5</span></kbd>
+                                    <kbd data-key="54" class="kk-key">^<span>6</span></kbd>
+                                    <kbd data-key="55" class="kk-key">&amp;<span>7</span></kbd>
+                                    <kbd data-key="56" class="kk-key">*<span>8</span></kbd>
+                                    <kbd data-key="57" class="kk-key">(<span>9</span></kbd>
+                                    <kbd data-key="48" class="kk-key">)<span>0</span></kbd>
+                                    <kbd data-key="189" class="kk-key">-<i class="underscore">_</i></kbd>
+                                    <kbd data-key="187" class="kk-key">+<span>=</span></kbd>
+                                    <kbd data-key="8" class="kk-key backspace">Backspace</kbd>
+                                </div>
+                                <div class="keyboard-group">
+                                    <kbd data-key="45" class="kk-key">Insert</kbd>
+                                    <kbd data-key="36" class="kk-key">Home</kbd>
+                                    <kbd data-key="33" class="kk-key">Page Up</kbd>
+                                </div>
+                            </div>
+                            <!-- 3rd row -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-group">
+                                    <kbd data-key="9" class="kk-key tab">Tab⭾</kbd>
+                                    <kbd data-key="81" class="kk-key">Q</kbd>
+                                    <kbd data-key="87" class="kk-key">W</kbd>
+                                    <kbd data-key="69" class="kk-key">E</kbd>
+                                    <kbd data-key="82" class="kk-key">R</kbd>
+                                    <kbd data-key="84" class="kk-key">T</kbd>
+                                    <kbd data-key="89" class="kk-key">Y</kbd>
+                                    <kbd data-key="85" class="kk-key">U</kbd>
+                                    <kbd data-key="73" class="kk-key">I</kbd>
+                                    <kbd data-key="79" class="kk-key">O</kbd>
+                                    <kbd data-key="80" class="kk-key">P</kbd>
+                                    <kbd data-key="219" class="kk-key">{<span>[</span></kbd>
+                                    <kbd data-key="221" class="kk-key">}<span>]</span></kbd>
+                                    <kbd data-key="220" class="kk-key">|<span>\</span></kbd>
+                                </div>
+                                <div class="keyboard-group">
+                                    <kbd data-key="46" class="kk-key">Delete</kbd>
+                                    <kbd data-key="35" class="kk-key">End</kbd>
+                                    <kbd data-key="34" class="kk-key">Page Down</kbd>
+                                </div>
+                            </div>
+                            <!-- 4th row -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-group">
+                                    <kbd data-key="20" class="kk-key tab">CapsLock</kbd>
+                                    <kbd data-key="65" class="kk-key">A</kbd>
+                                    <kbd data-key="83" class="kk-key">S</kbd>
+                                    <kbd data-key="68" class="kk-key">D</kbd>
+                                    <kbd data-key="70" class="kk-key">F</kbd>
+                                    <kbd data-key="71" class="kk-key">G</kbd>
+                                    <kbd data-key="72" class="kk-key">H</kbd>
+                                    <kbd data-key="74" class="kk-key">J</kbd>
+                                    <kbd data-key="75" class="kk-key">K</kbd>
+                                    <kbd data-key="76" class="kk-key">L</kbd>
+                                    <kbd data-key="186" class="kk-key">:<span>;</span></kbd>
+                                    <kbd data-key="222" class="kk-key">"<span>'</span></kbd>
+                                    <kbd data-key="13" class="kk-key enter">Enter</kbd>
+                                </div>
+                                <div class="empty-group"></div>
+                            </div>
+                            <!-- 5th row -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-group">
+                                    <kbd data-key="16" class="kk-key shift l-s"><span>⇧</span>&nbsp;Shift</kbd>
+                                    <kbd data-key="90" class="kk-key">Z</kbd>
+                                    <kbd data-key="88" class="kk-key">X</kbd>
+                                    <kbd data-key="67" class="kk-key">C</kbd>
+                                    <kbd data-key="86" class="kk-key">V</kbd>
+                                    <kbd data-key="66" class="kk-key">B</kbd>
+                                    <kbd data-key="78" class="kk-key">N</kbd>
+                                    <kbd data-key="77" class="kk-key">M</kbd>
+                                    <kbd data-key="188" class="kk-key">&lt;<span>,</span></kbd>
+                                    <kbd data-key="190" class="kk-key">&gt;<span>.</span></kbd>
+                                    <kbd data-key="191" class="kk-key">?<span>/</span></kbd>
+                                    <kbd data-key="16" class="kk-key shift r-s"><span>⇧</span>&nbsp;Shift</kbd>
+                                </div>
+                                <div class="keyboard-group">
+                                    <kbd class="kk-key key-empty"></kbd>
+                                    <kbd data-key="38" class="kk-key">↑</kbd>
+                                    <kbd class="kk-key key-empty"></kbd>
+                                </div>
+                            </div>
+                            <!-- 6th row -->
+                            <div class="keyboard-row">
+                                <div class="keyboard-group">
+                                    <kbd data-key="17" class="kk-key">Ctrl</kbd>
+                                    <kbd data-key="91" class="kk-key">Win</kbd>
+                                    <kbd data-key="18" class="kk-key">Alt</kbd>
+                                    <kbd data-key="32" class="kk-key spacebar"></kbd>
+                                    <kbd data-key="18" class="kk-key">Alt</kbd>
+                                    <kbd data-key="93" class="kk-key c-menu">Menu</kbd>
+                                    <kbd data-key="17" class="kk-key">Ctrl</kbd>
+                                </div>
+                                <div class="keyboard-group">
+                                    <kbd data-key="37" class="kk-key">←</kbd>
+                                    <kbd data-key="40" class="kk-key">↓</kbd>
+                                    <kbd data-key="39" class="kk-key">→</kbd>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="status info">
+                        🔍 Нажатые клавиши: <span id="pressedKeys">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Тест мыши -->
+            <div id="mouse" class="test-section">
+                <div class="test-area">
+                    <h2>Тест мыши</h2>
+                    <p class="test-instruction">Нажимайте кнопки мыши, двигайте курсор и скроллите колесико. Нажимайте на визуальную мышку для теста кнопок.</p>
+                    
+                    <div class="mouse-test-area" id="mouseArea">
+                        <div class="scroll-indicator">
+                            Скролл: <span id="scrollDirection">-</span>
+                        </div>
+                        <div class="mouse-visual">
+                            <div class="mouse-body"></div>
+                            <div class="mouse-button mouse-left" id="visualLeftMouse"></div>
+                            <div class="mouse-button mouse-right" id="visualRightMouse"></div>
+                            <div class="mouse-button mouse-middle" id="visualMiddleMouse"></div>
+                            <div class="mouse-button mouse-side" id="visualSide1"></div>
+                            <div class="mouse-button mouse-side2" id="visualSide2"></div>
+                        </div>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center;">
+                            Двигайте мышью и скролльте здесь
+                        </div>
+                    </div>
+                    
+                    <div class="mouse-stats">
+                        <div class="stat-item">
+                            <span>Координаты:</span>
+                            <span class="stat-value">X: <span id="mouseX">0</span>, Y: <span id="mouseY">0</span></span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Нажатая кнопка:</span>
+                            <span class="stat-value" id="mouseButton">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Скролл:</span>
+                            <span class="stat-value" id="scrollStatus">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Двойные клики:</span>
+                            <span class="stat-value" id="doubleClicks">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Всего кликов:</span>
+                            <span class="stat-value" id="totalClicks">0</span>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="mouse-button-ui" id="leftMouse">LMB</button>
+                        <button class="mouse-button-ui" id="rightMouse">RMB</button>
+                        <button class="mouse-button-ui" id="middleMouse">Middle</button>
+                        <button class="mouse-button-ui" id="side1Mouse">Side 1</button>
+                        <button class="mouse-button-ui" id="side2Mouse">Side 2</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Тест микрофона -->
+            <div id="microphone" class="test-section">
+                <div class="test-area">
+                    <h2>Тест микрофона</h2>
+                    <p class="test-instruction">Нажмите кнопку и говорите в микрофон. Звук будет выводиться на наушники в реальном времени.</p>
+                    
+                    <div class="microphone-test">
+                        <div class="mic-visualizer">
+                            <div class="mic-level" id="micLevel"></div>
+                        </div>
+                        
+                        <button class="mic-button" id="micTestButton">
+                            Начать тест микрофона
+                        </button>
+                        
+                        <div class="status" id="micStatus">
+                            Нажмите кнопку для начала теста
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Тест наушников -->
+            <div id="headphones" class="test-section">
+                <div class="test-area">
+                    <h2>Тест наушников</h2>
+                    <p class="test-instruction">Нажмите кнопки для проверки звука в разных каналах. Убедитесь, что звук равномерно распределяется.</p>
+                    
+                    <div class="audio-test">
+                        <div class="audio-buttons">
+                            <button class="audio-button left" onclick="playTestSound('left')">
+                                🔊 Левый канал
+                            </button>
+                            <button class="audio-button right" onclick="playTestSound('right')">
+                                🔊 Правый канал
+                            </button>
+                            <button class="audio-button mono" onclick="playTestSound('mono')">
+                                🔊 Моно (оба канала)
+                            </button>
+                        </div>
+                        
+                        <input type="range" class="volume-control" id="volumeControl" min="0" max="100" value="50">
+                        <div>Громкость: <span id="volumeValue">50%</span></div>
+                        
+                        <div class="status info" id="audioStatus">
+                            Нажмите любую кнопку для проверки звука
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Переключение между тестами
+        function showTest(testId) {
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(testId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Тест клавиатуры
+        const pressedKeysElement = document.getElementById('pressedKeys');
+        const pressedKeys = new Set();
+        const testedKeys = new Set();
+
+        // Карта клавиш с правильными кодами
+        const keyMap = {
+            'Escape': 'Esc',
+            'F1': 'F1', 'F2': 'F2', 'F3': 'F3', 'F4': 'F4',
+            'F5': 'F5', 'F6': 'F6', 'F7': 'F7', 'F8': 'F8',
+            'F9': 'F9', 'F10': 'F10', 'F11': 'F11', 'F12': 'F12',
+            'PrintScreen': 'Prt Sc',
+            'ScrollLock': 'Scr Lk',
+            'Pause': 'Pause',
+            'Insert': 'Insert',
+            'Home': 'Home',
+            'PageUp': 'Page Up',
+            'Delete': 'Delete',
+            'End': 'End',
+            'PageDown': 'Page Down',
+            'ArrowUp': '↑',
+            'ArrowDown': '↓',
+            'ArrowLeft': '←',
+            'ArrowRight': '→'
+        };
+
+        // Карта кодов клавиш
+        const keyCodeMap = {
+            'Escape': '27',
+            'F1': '112', 'F2': '113', 'F3': '114', 'F4': '115',
+            'F5': '116', 'F6': '117', 'F7': '118', 'F8': '119',
+            'F9': '120', 'F10': '121', 'F11': '122', 'F12': '123',
+            'PrintScreen': '44',
+            'ScrollLock': '145',
+            'Pause': '19',
+            'Backquote': '192',
+            'Digit1': '49', 'Digit2': '50', 'Digit3': '51', 'Digit4': '52',
+            'Digit5': '53', 'Digit6': '54', 'Digit7': '55', 'Digit8': '56',
+            'Digit9': '57', 'Digit0': '48',
+            'Minus': '189', 'Equal': '187',
+            'Backspace': '8',
+            'Tab': '9',
+            'KeyQ': '81', 'KeyW': '87', 'KeyE': '69', 'KeyR': '82',
+            'KeyT': '84', 'KeyY': '89', 'KeyU': '85', 'KeyI': '73',
+            'KeyO': '79', 'KeyP': '80',
+            'BracketLeft': '219', 'BracketRight': '221', 'Backslash': '220',
+            'CapsLock': '20',
+            'KeyA': '65', 'KeyS': '83', 'KeyD': '68', 'KeyF': '70',
+            'KeyG': '71', 'KeyH': '72', 'KeyJ': '74', 'KeyK': '75',
+            'KeyL': '76',
+            'Semicolon': '186', 'Quote': '222',
+            'Enter': '13',
+            'ShiftLeft': '16', 'ShiftRight': '16',
+            'KeyZ': '90', 'KeyX': '88', 'KeyC': '67', 'KeyV': '86',
+            'KeyB': '66', 'KeyN': '78', 'KeyM': '77',
+            'Comma': '188', 'Period': '190', 'Slash': '191',
+            'ControlLeft': '17', 'ControlRight': '17',
+            'MetaLeft': '91', 'MetaRight': '91',
+            'AltLeft': '18', 'AltRight': '18',
+            'Space': '32',
+            'ContextMenu': '93',
+            'ArrowLeft': '37', 'ArrowUp': '38', 'ArrowRight': '39', 'ArrowDown': '40',
+            'Insert': '45', 'Home': '36', 'PageUp': '33',
+            'Delete': '46', 'End': '35', 'PageDown': '34'
+        };
+
+        // Перехват всех клавиш браузера
+        document.addEventListener('keydown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const code = e.code;
+            let key = keyMap[code] || e.key;
+            
+            if (key.length > 1 && !['Shift', 'Control', 'Alt', 'Meta', 'Tab', 'CapsLock', 'Enter', 'Backspace', 'Delete', 'Escape'].includes(key)) {
+                key = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+            }
+            
+            pressedKeys.add(key);
+            testedKeys.add(key);
+            updateKeyboardDisplay();
+            highlightKey(code, key, true);
+        });
+
+        document.addEventListener('keyup', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const code = e.code;
+            let key = keyMap[code] || e.key;
+            
+            if (key.length > 1 && !['Shift', 'Control', 'Alt', 'Meta', 'Tab', 'CapsLock', 'Enter', 'Backspace', 'Delete', 'Escape'].includes(key)) {
+                key = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+            }
+            
+            pressedKeys.delete(key);
+            updateKeyboardDisplay();
+            highlightKey(code, key, false);
+        });
+
+        function highlightKey(code, key, isPressed) {
+            const keyCode = keyCodeMap[code];
+            let keyElement = document.querySelector(`[data-key="${keyCode}"]`);
+            
+            if (keyElement) {
+                if (isPressed) {
+                    keyElement.classList.add('pressed');
+                } else {
+                    keyElement.classList.remove('pressed');
+                    if (testedKeys.has(key)) {
+                        keyElement.classList.add('tested');
+                    }
+                }
+            }
+        }
+
+        function updateKeyboardDisplay() {
+            pressedKeysElement.textContent = Array.from(pressedKeys).join(', ') || '-';
+        }
+
+        // Тест мыши (улучшенная версия как на djinn.ru)
+        const mouseArea = document.getElementById('mouseArea');
+        const mouseX = document.getElementById('mouseX');
+        const mouseY = document.getElementById('mouseY');
+        const mouseButton = document.getElementById('mouseButton');
+        const scrollDirection = document.getElementById('scrollDirection');
+        const scrollStatus = document.getElementById('scrollStatus');
+        const doubleClicks = document.getElementById('doubleClicks');
+        const totalClicks = document.getElementById('totalClicks');
+
+        let clickCount = 0;
+        let doubleClickCount = 0;
+        let lastClickTime = 0;
+        const doubleClickThreshold = 500; // ms
+
+        mouseArea.addEventListener('mousemove', (e) => {
+            const rect = mouseArea.getBoundingClientRect();
+            mouseX.textContent = Math.round(e.clientX - rect.left);
+            mouseY.textContent = Math.round(e.clientY - rect.top);
+        });
+
+        mouseArea.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            if (e.deltaY > 0) {
+                scrollDirection.textContent = '↓ Вниз';
+                scrollStatus.textContent = '↓ Вниз';
+            } else {
+                scrollDirection.textContent = '↑ Вверх';
+                scrollStatus.textContent = '↑ Вверх';
+            }
+            
+            // Сброс через 2 секунды
+            setTimeout(() => {
+                scrollDirection.textContent = '-';
+                scrollStatus.textContent = '-';
+            }, 2000);
+        });
+
+        mouseArea.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const currentTime = new Date().getTime();
+            
+            // Проверка на двойной клик
+            if (currentTime - lastClickTime < doubleClickThreshold) {
+                doubleClickCount++;
+                doubleClicks.textContent = doubleClickCount;
+            }
+            
+            lastClickTime = currentTime;
+            clickCount++;
+            totalClicks.textContent = clickCount;
+            
+            handleMousePress(e.button, true);
+        });
+
+        mouseArea.addEventListener('mouseup', (e) => {
+            e.preventDefault();
+            handleMousePress(e.button, false);
+        });
+
+        // Обработка кликов на визуальной мышке
+        document.getElementById('visualLeftMouse').addEventListener('mousedown', () => handleMousePress(0, true));
+        document.getElementById('visualLeftMouse').addEventListener('mouseup', () => handleMousePress(0, false));
+        document.getElementById('visualRightMouse').addEventListener('mousedown', () => handleMousePress(2, true));
+        document.getElementById('visualRightMouse').addEventListener('mouseup', () => handleMousePress(2, false));
+        document.getElementById('visualMiddleMouse').addEventListener('mousedown', () => handleMousePress(1, true));
+        document.getElementById('visualMiddleMouse').addEventListener('mouseup', () => handleMousePress(1, false));
+        document.getElementById('visualSide1').addEventListener('mousedown', () => handleMousePress(3, true));
+        document.getElementById('visualSide1').addEventListener('mouseup', () => handleMousePress(3, false));
+        document.getElementById('visualSide2').addEventListener('mousedown', () => handleMousePress(4, true));
+        document.getElementById('visualSide2').addEventListener('mouseup', () => handleMousePress(4, false));
+
+        function handleMousePress(button, isPressed) {
+            let buttonName = '';
+            let buttonElement = null;
+            
+            switch (button) {
+                case 0: 
+                    buttonName = 'LMB';
+                    buttonElement = document.getElementById('visualLeftMouse');
+                    break;
+                case 1: 
+                    buttonName = 'Middle';
+                    buttonElement = document.getElementById('visualMiddleMouse');
+                    break;
+                case 2: 
+                    buttonName = 'RMB';
+                    buttonElement = document.getElementById('visualRightMouse');
+                    break;
+                case 3: 
+                    buttonName = 'Side 1';
+                    buttonElement = document.getElementById('visualSide1');
+                    break;
+                case 4: 
+                    buttonName = 'Side 2';
+                    buttonElement = document.getElementById('visualSide2');
+                    break;
+                default: 
+                    buttonName = 'Other';
+            }
+            
+            if (isPressed) {
+                mouseButton.textContent = buttonName;
+                if (buttonElement) {
+                    buttonElement.classList.add('pressed');
+                }
+            } else {
+                mouseButton.textContent = '-';
+                if (buttonElement) {
+                    buttonElement.classList.remove('pressed');
+                }
+            }
+        }
+
+        // Предотвращение контекстного меню
+        mouseArea.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Тест микрофона с выводом звука на наушники
+        const micTestButton = document.getElementById('micTestButton');
+        const micLevel = document.getElementById('micLevel');
+        const micStatus = document.getElementById('micStatus');
+        let audioContext, microphone, destination;
+
+        micTestButton.addEventListener('click', async () => {
+            if (micTestButton.classList.contains('listening')) {
+                stopMicrophoneTest();
+            } else {
+                startMicrophoneTest();
+            }
+        });
+
+        async function startMicrophoneTest() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                microphone = audioContext.createMediaStreamSource(stream);
+                destination = audioContext.destination;
+                
+                // Подключаем микрофон напрямую к выходу (наушникам)
+                microphone.connect(destination);
+                
+                micTestButton.textContent = 'Остановить тест';
+                micTestButton.classList.add('listening');
+                micStatus.textContent = 'Говорите в микрофон - звук выводится на наушники';
+                micStatus.className = 'status success';
+                
+                // Визуализатор уровня звука
+                const analyser = audioContext.createAnalyser();
+                microphone.connect(analyser);
+                analyser.fftSize = 256;
+                
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                
+                function updateMicLevel() {
+                    if (!analyser) return;
+                    
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    let average = sum / bufferLength;
+                    
+                    micLevel.style.width = average + '%';
+                    
+                    if (micTestButton.classList.contains('listening')) {
+                        requestAnimationFrame(updateMicLevel);
+                    }
+                }
+                
+                updateMicLevel();
+                
+            } catch (error) {
+                micStatus.textContent = 'Ошибка доступа к микрофону: ' + error.message;
+                micStatus.className = 'status error';
+            }
+        }
+
+        function stopMicrophoneTest() {
+            if (microphone && destination) {
+                microphone.disconnect(destination);
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            micTestButton.textContent = 'Начать тест микрофона';
+            micTestButton.classList.remove('listening');
+            micStatus.textContent = 'Тест остановлен';
+            micStatus.className = 'status info';
+            micLevel.style.width = '0%';
+        }
+
+        // Тест наушников с реальным звуком
+        const volumeControl = document.getElementById('volumeControl');
+        const volumeValue = document.getElementById('volumeValue');
+        const audioStatus = document.getElementById('audioStatus');
+
+        volumeControl.addEventListener('input', (e) => {
+            volumeValue.textContent = e.target.value + '%';
+        });
+
+        function playTestSound(channel) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const panner = audioContext.createStereoPanner();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 440;
+            
+            // Настройка панорамирования
+            if (channel === 'left') {
+                panner.pan.value = -1;
+                audioStatus.textContent = 'Звук в левом канале';
+            } else if (channel === 'right') {
+                panner.pan.value = 1;
+                audioStatus.textContent = 'Звук в правом канале';
+            } else {
+                panner.pan.value = 0;
+                audioStatus.textContent = 'Звук в обоих каналах (моно)';
+            }
+            
+            audioStatus.className = 'status success';
+            
+            // Настройка громкости
+            const volume = volumeControl.value / 100;
+            gainNode.gain.value = volume * 0.1;
+            
+            // Соединяем узлы
+            oscillator.connect(gainNode);
+            gainNode.connect(panner);
+            panner.connect(audioContext.destination);
+            
+            // Запускаем и останавливаем звук
+            oscillator.start();
+            setTimeout(() => {
+                oscillator.stop();
+                audioStatus.textContent = 'Тест завершен';
+                setTimeout(() => {
+                    audioStatus.textContent = 'Нажмите любую кнопку для проверки звука';
+                    audioStatus.className = 'status info';
+                }, 2000);
+            }, 1000);
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            updateKeyboardDisplay();
+            
+            // Блокировка стандартного поведения F1-F12
+            for (let i = 1; i <= 12; i++) {
+                window.addEventListener('keydown', function(e) {
+                    if (e.key === `F${i}` || e.code === `F${i}`) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
