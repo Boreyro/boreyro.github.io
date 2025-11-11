@@ -326,45 +326,70 @@
         }
 
         /* Стрелочки скролла на мышке */
-    .scroll-arrow {
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        background: linear-gradient(145deg, #404040, #383838);
-        border: 2px solid #555;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        font-weight: bold;
-        color: #e0e0e0;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .scroll-arrow-up {
-        top: 120px;
-        left: 85px;
-    }
-    
-    .scroll-arrow-down {
-        top: 160px;
-        left: 85px;
-    }
-    
-    .scroll-arrow.active {
-        background: linear-gradient(145deg, #27ae60, #229954);
-        border-color: #2ecc71;
-        transform: scale(1.1);
-        box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
-    }
-    
-    .scroll-arrow.misclick {
-        background: linear-gradient(145deg, #e74c3c, #c0392b);
-        border-color: #ec7063;
-        animation: misclickFlash 0.3s ease;
-    }
+    /* Стрелочки скролла на мышке - увеличенные */
+        .scroll-arrow {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #404040, #383838);
+            border: 2px solid #555;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .scroll-arrow-up {
+            top: 110px;
+            left: 75px;
+        }
+        
+        .scroll-arrow-down {
+            top: 170px;
+            left: 75px;
+        }
+        
+        .scroll-arrow:hover {
+            background: linear-gradient(145deg, #4a4a4a, #424242);
+            transform: translateY(-2px);
+        }
+        
+        .scroll-arrow.active {
+            background: linear-gradient(145deg, #27ae60, #229954);
+            border-color: #2ecc71;
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
+        }
+        
+        .scroll-arrow.misclick {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            border-color: #ec7063;
+            animation: misclickFlash 0.5s ease;
+        }
+        
+        @keyframes misclickFlash {
+            0% { transform: scale(1.2); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1.1); }
+        }
+        
+        /* Обновляем стили визуальной мыши чтобы вместить большие стрелочки */
+        .mouse-visual {
+            width: 220px;
+            height: 320px;
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
     
     @keyframes misclickFlash {
         0% { transform: scale(1.2); }
@@ -1283,6 +1308,7 @@ document.getElementById('scrollArrowDown').addEventListener('mousedown', (e) => 
     </script>
 </body>
 </html>
+
 
 
 
