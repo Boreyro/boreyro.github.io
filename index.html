@@ -245,7 +245,6 @@
             height: 16px;
         }
 
-        /* Стили для теста мыши (как на djinn.ru) */
         .mouse-test-area {
             width: 100%;
             height: 400px;
@@ -326,17 +325,52 @@
             top: 50px;
         }
 
-        .scroll-indicator {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 5px;
-            color: #e74c3c;
-            font-family: monospace;
-            font-size: 14px;
-        }
+        /* Стрелочки скролла на мышке */
+    .scroll-arrow {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(145deg, #404040, #383838);
+        border: 2px solid #555;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        color: #e0e0e0;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .scroll-arrow-up {
+        top: 120px;
+        left: 85px;
+    }
+    
+    .scroll-arrow-down {
+        top: 160px;
+        left: 85px;
+    }
+    
+    .scroll-arrow.active {
+        background: linear-gradient(145deg, #27ae60, #229954);
+        border-color: #2ecc71;
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
+    }
+    
+    .scroll-arrow.misclick {
+        background: linear-gradient(145deg, #e74c3c, #c0392b);
+        border-color: #ec7063;
+        animation: misclickFlash 0.3s ease;
+    }
+    
+    @keyframes misclickFlash {
+        0% { transform: scale(1.2); }
+        50% { transform: scale(1.3); }
+        100% { transform: scale(1.1); }
+    }
 
         .mouse-stats {
             background: #2c3e50;
@@ -910,78 +944,150 @@
             pressedKeysElement.textContent = Array.from(pressedKeys).join(', ') || '-';
         }
 
-        // Тест мыши (улучшенная версия как на djinn.ru)
-        const mouseArea = document.getElementById('mouseArea');
-        const mouseX = document.getElementById('mouseX');
-        const mouseY = document.getElementById('mouseY');
-        const mouseButton = document.getElementById('mouseButton');
-        const scrollDirection = document.getElementById('scrollDirection');
-        const scrollStatus = document.getElementById('scrollStatus');
-        const doubleClicks = document.getElementById('doubleClicks');
-        const totalClicks = document.getElementById('totalClicks');
+// Тест мыши (улучшенная версия как на djinn.ru)
+const mouseArea = document.getElementById('mouseArea');
+const mouseX = document.getElementById('mouseX');
+const mouseY = document.getElementById('mouseY');
+const mouseButton = document.getElementById('mouseButton');
+const scrollDirection = document.getElementById('scrollDirection');
+const scrollStatus = document.getElementById('scrollStatus');
+const doubleClicks = document.getElementById('doubleClicks');
+const totalClicks = document.getElementById('totalClicks');
 
-        let clickCount = 0;
-        let doubleClickCount = 0;
-        let lastClickTime = 0;
-        const doubleClickThreshold = 500; // ms
+let clickCount = 0;
+let doubleClickCount = 0;
+let lastClickTime = 0;
+const doubleClickThreshold = 500; // ms
 
-        mouseArea.addEventListener('mousemove', (e) => {
-            const rect = mouseArea.getBoundingClientRect();
-            mouseX.textContent = Math.round(e.clientX - rect.left);
-            mouseY.textContent = Math.round(e.clientY - rect.top);
-        });
+// Добавляем переменные для скролла
+let scrollErrorCount = 0;
+let lastScrollTime = 0;
+const scrollCooldown = 100; // ms
 
-        mouseArea.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            
-            if (e.deltaY > 0) {
-                scrollDirection.textContent = '↓ Вниз';
-                scrollStatus.textContent = '↓ Вниз';
-            } else {
-                scrollDirection.textContent = '↑ Вверх';
-                scrollStatus.textContent = '↑ Вверх';
-            }
-            
-            // Сброс через 2 секунды
+mouseArea.addEventListener('mousemove', (e) => {
+    const rect = mouseArea.getBoundingClientRect();
+    mouseX.textContent = Math.round(e.clientX - rect.left);
+    mouseY.textContent = Math.round(e.clientY - rect.top);
+});
+
+// ОБНОВЛЕННЫЙ обработчик скролла с стрелочками
+mouseArea.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    
+    const currentTime = new Date().getTime();
+    if (currentTime - lastScrollTime < scrollCooldown) return;
+    lastScrollTime = currentTime;
+    
+    const scrollUpArrow = document.getElementById('scrollArrowUp');
+    const scrollDownArrow = document.getElementById('scrollArrowDown');
+    
+    if (e.deltaY > 0) {
+        // Скролл вниз
+        scrollDirection.textContent = '↓ Вниз';
+        scrollStatus.textContent = '↓ Вниз';
+        
+        // Подсвечиваем стрелочку вниз
+        scrollDownArrow.classList.add('active');
+        setTimeout(() => {
+            scrollDownArrow.classList.remove('active');
+        }, 300);
+        
+    } else {
+        // Скролл вверх
+        scrollDirection.textContent = '↑ Вверх';
+        scrollStatus.textContent = '↑ Вверх';
+        
+        // Подсвечиваем стрелочку вверх
+        scrollUpArrow.classList.add('active');
+        setTimeout(() => {
+            scrollUpArrow.classList.remove('active');
+        }, 300);
+    }
+    
+    // Проверка на misclick (очень быстрый скролл)
+    if (currentTime - lastScrollTime < 50) {
+        scrollErrorCount++;
+        document.getElementById('scrollErrors').textContent = scrollErrorCount;
+        
+        // Мигание красным при misclick
+        if (e.deltaY > 0) {
+            scrollDownArrow.classList.add('misclick');
             setTimeout(() => {
-                scrollDirection.textContent = '-';
-                scrollStatus.textContent = '-';
-            }, 2000);
-        });
+                scrollDownArrow.classList.remove('misclick');
+            }, 300);
+        } else {
+            scrollUpArrow.classList.add('misclick');
+            setTimeout(() => {
+                scrollUpArrow.classList.remove('misclick');
+            }, 300);
+        }
+    }
+    
+    // Сброс через 2 секунды
+    setTimeout(() => {
+        scrollDirection.textContent = '-';
+        scrollStatus.textContent = '-';
+    }, 2000);
+});
 
-        mouseArea.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            const currentTime = new Date().getTime();
-            
-            // Проверка на двойной клик
-            if (currentTime - lastClickTime < doubleClickThreshold) {
-                doubleClickCount++;
-                doubleClicks.textContent = doubleClickCount;
-            }
-            
-            lastClickTime = currentTime;
-            clickCount++;
-            totalClicks.textContent = clickCount;
-            
-            handleMousePress(e.button, true);
-        });
+mouseArea.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    const currentTime = new Date().getTime();
+    
+    // Проверка на двойной клик
+    if (currentTime - lastClickTime < doubleClickThreshold) {
+        doubleClickCount++;
+        doubleClicks.textContent = doubleClickCount;
+    }
+    
+    lastClickTime = currentTime;
+    clickCount++;
+    totalClicks.textContent = clickCount;
+    
+    handleMousePress(e.button, true);
+});
 
-        mouseArea.addEventListener('mouseup', (e) => {
-            e.preventDefault();
-            handleMousePress(e.button, false);
-        });
+mouseArea.addEventListener('mouseup', (e) => {
+    e.preventDefault();
+    handleMousePress(e.button, false);
+});
 
-        // Обработка кликов на визуальной мышке
-        document.getElementById('visualLeftMouse').addEventListener('mousedown', () => handleMousePress(0, true));
-        document.getElementById('visualLeftMouse').addEventListener('mouseup', () => handleMousePress(0, false));
-        document.getElementById('visualRightMouse').addEventListener('mousedown', () => handleMousePress(2, true));
-        document.getElementById('visualRightMouse').addEventListener('mouseup', () => handleMousePress(2, false));
-        document.getElementById('visualMiddleMouse').addEventListener('mousedown', () => handleMousePress(1, true));
-        document.getElementById('visualMiddleMouse').addEventListener('mouseup', () => handleMousePress(1, false));
-        document.getElementById('visualSide1').addEventListener('mousedown', () => handleMousePress(3, true));
-        document.getElementById('visualSide1').addEventListener('mouseup', () => handleMousePress(3, false));
-        document.getElementById('visualSide2').addEventListener('mousedown', () => handleMousePress(4, true));
-        document.getElementById('visualSide2').addEventListener('mouseup', () => handleMousePress(4, false));
+// Обработка кликов на визуальной мышке
+document.getElementById('visualLeftMouse').addEventListener('mousedown', () => handleMousePress(0, true));
+document.getElementById('visualLeftMouse').addEventListener('mouseup', () => handleMousePress(0, false));
+document.getElementById('visualRightMouse').addEventListener('mousedown', () => handleMousePress(2, true));
+document.getElementById('visualRightMouse').addEventListener('mouseup', () => handleMousePress(2, false));
+document.getElementById('visualMiddleMouse').addEventListener('mousedown', () => handleMousePress(1, true));
+document.getElementById('visualMiddleMouse').addEventListener('mouseup', () => handleMousePress(1, false));
+document.getElementById('visualSide1').addEventListener('mousedown', () => handleMousePress(3, true));
+document.getElementById('visualSide1').addEventListener('mouseup', () => handleMousePress(3, false));
+document.getElementById('visualSide2').addEventListener('mousedown', () => handleMousePress(4, true));
+document.getElementById('visualSide2').addEventListener('mouseup', () => handleMousePress(4, false));
+
+// Обработка случайных кликов по стрелочкам скролла (misclick)
+document.getElementById('scrollArrowUp').addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    scrollErrorCount++;
+    document.getElementById('scrollErrors').textContent = scrollErrorCount;
+    
+    const arrow = e.target;
+    arrow.classList.add('misclick');
+    setTimeout(() => {
+        arrow.classList.remove('misclick');
+    }, 500);
+});
+
+document.getElementById('scrollArrowDown').addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    scrollErrorCount++;
+    document.getElementById('scrollErrors').textContent = scrollErrorCount;
+    
+    const arrow = e.target;
+    arrow.classList.add('misclick');
+    setTimeout(() => {
+        arrow.classList.remove('misclick');
+    }, 500);
+});
 
         function handleMousePress(button, isPressed) {
             let buttonName = '';
@@ -1177,6 +1283,7 @@
     </script>
 </body>
 </html>
+
 
 
 
