@@ -131,6 +131,7 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
+        /* Стили клавиатуры */
         .keyboard-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -227,6 +228,11 @@
             background: #404040;
         }
 
+        .kk-key.num-large {
+            min-width: 70px;
+            height: 110px;
+        }
+
         .empty-group {
             min-width: 60px;
         }
@@ -277,6 +283,7 @@
             border-radius: 20px 0 0 20px;
             top: 15px;
             left: 50px;
+            transition: all 0.3s ease;
         }
 
         .mouse-right {
@@ -286,6 +293,7 @@
             border-radius: 0 20px 20px 0;
             top: 15px;
             left: 150px;
+            transition: all 0.3s ease;
         }
 
         .mouse-middle {
@@ -296,6 +304,7 @@
             top: 60px;
             left: 105px;
             z-index: 2;
+            transition: all 0.3s ease;
         }
 
         .mouse-side {
@@ -306,6 +315,7 @@
             position: absolute;
             left: 25px;
             top: 90px;
+            transition: all 0.3s ease;
         }
 
         .mouse-side2 {
@@ -316,8 +326,10 @@
             position: absolute;
             left: 25px;
             top: 40px;
+            transition: all 0.3s ease;
         }
 
+        /* Стрелочки скролла на мышке */
         .scroll-arrow {
             position: absolute;
             width: 50px;
@@ -347,6 +359,7 @@
         .scroll-arrow:hover {
             background: #6a6a6a;
             transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
         }
         
         .scroll-arrow.active {
@@ -361,9 +374,18 @@
         }
 
         @keyframes misclickFlash {
-            0% { transform: scale(1.2); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1.1); }
+            0% { 
+                transform: scale(1.2); 
+                box-shadow: 0 0 25px rgba(119, 61, 161, 0.9);
+            }
+            50% { 
+                transform: scale(1.3); 
+                box-shadow: 0 0 30px rgba(119, 61, 161, 1);
+            }
+            100% { 
+                transform: scale(1.1); 
+                box-shadow: 0 0 20px rgba(119, 61, 161, 0.7);
+            }
         }
 
         .stat-item {
@@ -376,6 +398,11 @@
         .stat-value {
             color: #773da1;
             font-weight: bold;
+        }
+
+        /* Стили для теста микрофона и наушников */
+        .microphone-test, .audio-test {
+            text-align: center;
         }
 
         .mic-visualizer {
@@ -454,12 +481,14 @@
             text-align: center;
             font-weight: bold;
             border: 1px solid;
+            transition: all 0.3s ease;
         }
 
         .status.success {
             background: linear-gradient(145deg, #27ae60, #229954);
             color: white;
             border-color: #2ecc71;
+            box-shadow: 0 0 15px rgba(39, 174, 96, 0.5);
         }
 
         .status.error {
@@ -472,6 +501,7 @@
             background: linear-gradient(145deg, #773da1, #5a2d7d);
             color: white;
             border-color: #8a4dbb;
+            box-shadow: 0 0 15px rgba(119, 61, 161, 0.5);
         }
 
         .test-instruction {
@@ -492,10 +522,17 @@
         }
 
         @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0.7; }
+            from { 
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(119, 61, 161, 0.7);
+            }
+            to { 
+                opacity: 0.7;
+                box-shadow: 0 0 5px rgba(119, 61, 161, 0.3);
+            }
         }
 
+        /* Пасхалка */
         .easter-egg {
             position: fixed;
             top: 0;
@@ -523,16 +560,18 @@
             color: white;
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
             animation: eggPulse 2s infinite;
+            text-align: center;
         }
 
         @keyframes eggPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+            50% { transform: scale(1.1); text-shadow: 0 0 50px rgba(255, 255, 255, 1); }
+            100% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
         }
     </style>
 </head>
 <body>
+    <!-- Пасхалка -->
     <div class="easter-egg" id="easterEgg">
         <div class="easter-egg-text">пупупу...</div>
     </div>
@@ -544,12 +583,15 @@
             <button class="nav-item" onclick="showTest('mouse')">🖱️ Мышь</button>
             <button class="nav-item" onclick="showTest('microphone')">🎤 Микрофон</button>
             <button class="nav-item" onclick="showTest('headphones')">🎧 Наушники</button>
-            <a href="https://2ip.ru" target="_blank" class="nav-item external-link">🌐 Перейти на 2ip.ru</a>
+            <a href="https://2ip.ru" target="_blank" class="nav-item external-link">
+                🌐 Перейти на 2ip.ru
+            </a>
         </div>
 
         <div class="content">
             <h1>Тестирование Устройств</h1>
             
+            <!-- Тест клавиатуры -->
             <div id="keyboard" class="test-section active">
                 <div class="test-area">
                     <h2>Тест клавиатуры</h2>
@@ -557,6 +599,7 @@
                     
                     <div class="keyboard-container">
                         <div class="keyboard">
+                            <!-- 1st row -->
                             <div class="keyboard-row">
                                 <div class="keyboard-group">
                                     <kbd data-key="27" class="kk-key">Esc</kbd>
@@ -587,6 +630,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- 2nd row -->
                             <div class="keyboard-row">
                                 <div class="keyboard-group">
                                     <kbd data-key="192" class="kk-key large">~</kbd>
@@ -610,6 +654,7 @@
                                     <kbd data-key="33" class="kk-key">Page Up</kbd>
                                 </div>
                             </div>
+                            <!-- 3rd row -->
                             <div class="keyboard-row">
                                 <div class="keyboard-group">
                                     <kbd data-key="9" class="kk-key tab">Tab⭾</kbd>
@@ -633,6 +678,7 @@
                                     <kbd data-key="34" class="kk-key">Page Down</kbd>
                                 </div>
                             </div>
+                            <!-- 4th row -->
                             <div class="keyboard-row">
                                 <div class="keyboard-group">
                                     <kbd data-key="20" class="kk-key tab">CapsLock</kbd>
@@ -651,6 +697,7 @@
                                 </div>
                                 <div class="empty-group"></div>
                             </div>
+                            <!-- 5th row -->
                             <div class="keyboard-row">
                                 <div class="keyboard-group">
                                     <kbd data-key="16L" class="kk-key shift l-s"><span>⇧</span>&nbsp;Shift</kbd>
@@ -672,6 +719,7 @@
                                     <kbd class="kk-key key-empty"></kbd>
                                 </div>
                             </div>
+                            <!-- 6th row -->
                             <div class="keyboard-row">
                                 <div class="keyboard-group">
                                     <kbd data-key="17L" class="kk-key">Ctrl</kbd>
@@ -697,28 +745,34 @@
                 </div>
             </div>
 
+            <!-- Тест мыши -->
             <div id="mouse" class="test-section">
                 <div class="test-area">
                     <h2>Тест мыши</h2>
-                    <p class="test-instruction">Нажимайте кнопки мыши, двигайте курсор и скроллите колесико. Нажимайте на визуальную мышку для теста кнопок.</p>
+                    <p class="test-instruction">Нажимайте кнопки мыши, двигайте курсор и скроллите колесико. Нажимайте на визуальную мышку для теста кнопок. Стрелочки показывают направление скролла.</p>
                     
                     <div class="mouse-test-area" id="mouseArea">
                         <div class="mouse-visual">
+                            <div class="mouse-body"></div>
                             <div class="mouse-button mouse-left" id="visualLeftMouse"></div>
                             <div class="mouse-button mouse-right" id="visualRightMouse"></div>
                             <div class="mouse-button mouse-middle" id="visualMiddleMouse"></div>
                             <div class="mouse-button mouse-side" id="visualSide1"></div>
                             <div class="mouse-button mouse-side2" id="visualSide2"></div>
                             
+                            <!-- Стрелочки скролла -->
                             <div class="scroll-arrow scroll-arrow-up" id="scrollArrowUp">↑</div>
                             <div class="scroll-arrow scroll-arrow-down" id="scrollArrowDown">↓</div>
+                        </div>
+                        <div style="position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center;">
+                            Проверка строго в окне
                         </div>
                     </div>
                     
                     <div class="mouse-stats">
                         <div class="stat-item">
                             <span>Координаты:</span>
-                            <span class="stat-value">X: <span id="mouseX">0</span> Y: <span id="mouseY">0</span></span>
+                            <span class="stat-value"><span id="mouseX">-</span> <span id="mouseY">-</span></span>
                         </div>
                         <div class="stat-item">
                             <span>Кнопка:</span>
@@ -744,6 +798,7 @@
                 </div>
             </div>
 
+            <!-- Тест микрофона -->
             <div id="microphone" class="test-section">
                 <div class="test-area">
                     <h2>Тест микрофона</h2>
@@ -754,13 +809,18 @@
                             <div class="mic-level" id="micLevel"></div>
                         </div>
                         
-                        <button class="mic-button" id="micTestButton">Начать тест микрофона</button>
+                        <button class="mic-button" id="micTestButton">
+                            Начать тест микрофона
+                        </button>
                         
-                        <div class="status" id="micStatus">Нажмите кнопку для начала теста</div>
+                        <div class="status" id="micStatus">
+                            Нажмите кнопку для начала теста
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Тест наушников -->
             <div id="headphones" class="test-section">
                 <div class="test-area">
                     <h2>Тест наушников</h2>
@@ -768,15 +828,23 @@
                     
                     <div class="audio-test">
                         <div class="audio-buttons">
-                            <button class="audio-button left" onclick="playTestSound('left')">🔊 Левый канал</button>
-                            <button class="audio-button right" onclick="playTestSound('right')">🔊 Правый канал</button>
-                            <button class="audio-button mono" onclick="playTestSound('mono')">🔊 Моно (оба канала)</button>
+                            <button class="audio-button left" onclick="playTestSound('left')">
+                                🔊 Левый канал
+                            </button>
+                            <button class="audio-button right" onclick="playTestSound('right')">
+                                🔊 Правый канал
+                            </button>
+                            <button class="audio-button mono" onclick="playTestSound('mono')">
+                                🔊 Моно (оба канала)
+                            </button>
                         </div>
                         
                         <input type="range" class="volume-control" id="volumeControl" min="0" max="100" value="50">
                         <div>Громкость: <span id="volumeValue">50%</span></div>
                         
-                        <div class="status info" id="audioStatus">Нажмите любую кнопку для проверки звука</div>
+                        <div class="status info" id="audioStatus">
+                            Нажмите любую кнопку для проверки звука
+                        </div>
                     </div>
                 </div>
             </div>
@@ -784,70 +852,134 @@
     </div>
 
     <script>
-        let clickCount = 0;
-        let easterEggShown = false;
-
+        // Переключение между тестами
         function showTest(testId) {
             document.querySelectorAll('.test-section').forEach(section => {
                 section.classList.remove('active');
             });
+            
             document.querySelectorAll('.nav-item').forEach(button => {
                 button.classList.remove('active');
             });
+            
             document.getElementById(testId).classList.add('active');
             event.target.classList.add('active');
         }
 
-        // Клавиатура
+        // Тест клавиатуры
         const pressedKeysElement = document.getElementById('pressedKeys');
         const pressedKeys = new Set();
+        const testedKeys = new Set();
 
+        // Карта клавиш с правильными кодами
+        const keyMap = {
+            'Escape': 'Esc',
+            'F1': 'F1', 'F2': 'F2', 'F3': 'F3', 'F4': 'F4',
+            'F5': 'F5', 'F6': 'F6', 'F7': 'F7', 'F8': 'F8',
+            'F9': 'F9', 'F10': 'F10', 'F11': 'F11', 'F12': 'F12',
+            'PrintScreen': 'Prt Sc',
+            'ScrollLock': 'Scr Lk',
+            'Pause': 'Pause',
+            'Insert': 'Insert',
+            'Home': 'Home',
+            'PageUp': 'Page Up',
+            'Delete': 'Delete',
+            'End': 'End',
+            'PageDown': 'Page Down',
+            'ArrowUp': '↑',
+            'ArrowDown': '↓',
+            'ArrowLeft': '←',
+            'ArrowRight': '→'
+        };
+
+        // Карта кодов клавиш с разделением левых и правых модификаторов
         const keyCodeMap = {
-            'Escape': '27', 'F1': '112', 'F2': '113', 'F3': '114', 'F4': '115',
-            'F5': '116', 'F6': '117', 'F7': '118', 'F8': '119', 'F9': '120',
-            'F10': '121', 'F11': '122', 'F12': '123', 'PrintScreen': '44',
-            'ScrollLock': '145', 'Pause': '19', 'Backquote': '192', 'Digit1': '49',
-            'Digit2': '50', 'Digit3': '51', 'Digit4': '52', 'Digit5': '53',
-            'Digit6': '54', 'Digit7': '55', 'Digit8': '56', 'Digit9': '57',
-            'Digit0': '48', 'Minus': '189', 'Equal': '187', 'Backspace': '8',
-            'Tab': '9', 'KeyQ': '81', 'KeyW': '87', 'KeyE': '69', 'KeyR': '82',
-            'KeyT': '84', 'KeyY': '89', 'KeyU': '85', 'KeyI': '73', 'KeyO': '79',
-            'KeyP': '80', 'BracketLeft': '219', 'BracketRight': '221', 'Backslash': '220',
-            'CapsLock': '20', 'KeyA': '65', 'KeyS': '83', 'KeyD': '68', 'KeyF': '70',
-            'KeyG': '71', 'KeyH': '72', 'KeyJ': '74', 'KeyK': '75', 'KeyL': '76',
-            'Semicolon': '186', 'Quote': '222', 'Enter': '13', 'ShiftLeft': '16L',
-            'ShiftRight': '16R', 'KeyZ': '90', 'KeyX': '88', 'KeyC': '67', 'KeyV': '86',
-            'KeyB': '66', 'KeyN': '78', 'KeyM': '77', 'Comma': '188', 'Period': '190',
-            'Slash': '191', 'ControlLeft': '17L', 'ControlRight': '17R', 'MetaLeft': '91',
-            'MetaRight': '91', 'AltLeft': '18L', 'AltRight': '18R', 'Space': '32',
-            'ContextMenu': '93', 'ArrowLeft': '37', 'ArrowUp': '38', 'ArrowRight': '39',
-            'ArrowDown': '40', 'Insert': '45', 'Home': '36', 'PageUp': '33',
+            'Escape': '27',
+            'F1': '112', 'F2': '113', 'F3': '114', 'F4': '115',
+            'F5': '116', 'F6': '117', 'F7': '118', 'F8': '119',
+            'F9': '120', 'F10': '121', 'F11': '122', 'F12': '123',
+            'PrintScreen': '44',
+            'ScrollLock': '145',
+            'Pause': '19',
+            'Backquote': '192',
+            'Digit1': '49', 'Digit2': '50', 'Digit3': '51', 'Digit4': '52',
+            'Digit5': '53', 'Digit6': '54', 'Digit7': '55', 'Digit8': '56',
+            'Digit9': '57', 'Digit0': '48',
+            'Minus': '189', 'Equal': '187',
+            'Backspace': '8',
+            'Tab': '9',
+            'KeyQ': '81', 'KeyW': '87', 'KeyE': '69', 'KeyR': '82',
+            'KeyT': '84', 'KeyY': '89', 'KeyU': '85', 'KeyI': '73',
+            'KeyO': '79', 'KeyP': '80',
+            'BracketLeft': '219', 'BracketRight': '221', 'Backslash': '220',
+            'CapsLock': '20',
+            'KeyA': '65', 'KeyS': '83', 'KeyD': '68', 'KeyF': '70',
+            'KeyG': '71', 'KeyH': '72', 'KeyJ': '74', 'KeyK': '75',
+            'KeyL': '76',
+            'Semicolon': '186', 'Quote': '222',
+            'Enter': '13',
+            'ShiftLeft': '16L', 'ShiftRight': '16R',
+            'KeyZ': '90', 'KeyX': '88', 'KeyC': '67', 'KeyV': '86',
+            'KeyB': '66', 'KeyN': '78', 'KeyM': '77',
+            'Comma': '188', 'Period': '190', 'Slash': '191',
+            'ControlLeft': '17L', 'ControlRight': '17R',
+            'MetaLeft': '91', 'MetaRight': '91',
+            'AltLeft': '18L', 'AltRight': '18R',
+            'Space': '32',
+            'ContextMenu': '93',
+            'ArrowLeft': '37', 'ArrowUp': '38', 'ArrowRight': '39', 'ArrowDown': '40',
+            'Insert': '45', 'Home': '36', 'PageUp': '33',
             'Delete': '46', 'End': '35', 'PageDown': '34'
         };
 
+        // Обновленная карта для отображения с указанием стороны
+        const keyDisplayMap = {
+            'ShiftLeft': 'Shift (L)',
+            'ShiftRight': 'Shift (R)',
+            'ControlLeft': 'Ctrl (L)',
+            'ControlRight': 'Ctrl (R)',
+            'AltLeft': 'Alt (L)',
+            'AltRight': 'Alt (R)'
+        };
+
+        // Перехват всех клавиш браузера
         document.addEventListener('keydown', (e) => {
             e.preventDefault();
+            e.stopPropagation();
+
             const code = e.code;
-            let key = e.key;
-            if (key.length > 1) key = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+            let key = keyDisplayMap[code] || keyMap[code] || e.key;
+            
+            if (key.length > 1 && !['Shift', 'Control', 'Alt', 'Meta', 'Tab', 'CapsLock', 'Enter', 'Backspace', 'Delete', 'Escape'].includes(key)) {
+                key = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+            }
+            
             pressedKeys.add(key);
+            testedKeys.add(key);
             updateKeyboardDisplay();
-            highlightKey(code, true);
+            highlightKey(code, key, true);
         });
 
         document.addEventListener('keyup', (e) => {
             e.preventDefault();
+            e.stopPropagation();
+
             const code = e.code;
-            let key = e.key;
-            if (key.length > 1) key = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+            let key = keyDisplayMap[code] || keyMap[code] || e.key;
+            
+            if (key.length > 1 && !['Shift', 'Control', 'Alt', 'Meta', 'Tab', 'CapsLock', 'Enter', 'Backspace', 'Delete', 'Escape'].includes(key)) {
+                key = key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
+            }
+            
             pressedKeys.delete(key);
             updateKeyboardDisplay();
-            highlightKey(code, false);
+            highlightKey(code, key, false);
         });
 
-        function highlightKey(code, isPressed) {
+        function highlightKey(code, key, isPressed) {
             const keyCode = keyCodeMap[code];
             let keyElement = document.querySelector(`[data-key="${keyCode}"]`);
+            
             if (keyElement) {
                 if (isPressed) {
                     keyElement.classList.add('pressed');
@@ -860,4 +992,358 @@
         }
 
         function updateKeyboardDisplay() {
-            pressedKeysElement.textContent = Array.from(pressed
+            pressedKeysElement.textContent = Array.from(pressedKeys).join(', ') || '-';
+        }
+
+        // Тест мыши
+        const mouseArea = document.getElementById('mouseArea');
+        const mouseX = document.getElementById('mouseX');
+        const mouseY = document.getElementById('mouseY');
+        const mouseButton = document.getElementById('mouseButton');
+        const scrollStatus = document.getElementById('scrollStatus');
+        const doubleClicks = document.getElementById('doubleClicks');
+        const totalClicks = document.getElementById('totalClicks');
+        const scrollErrors = document.getElementById('scrollErrors');
+
+        let clickCount = 0;
+        let doubleClickCount = 0;
+        let lastClickTime = 0;
+        const doubleClickThreshold = 500;
+
+        let scrollErrorCount = 0;
+        let lastScrollTime = 0;
+        const scrollCooldown = 100;
+
+        // Пасхалка
+        const easterEgg = document.getElementById('easterEgg');
+        let easterEggShown = false;
+
+        mouseArea.addEventListener('mousemove', (e) => {
+            const rect = mouseArea.getBoundingClientRect();
+            mouseX.textContent = `X: ${Math.round(e.clientX - rect.left)}`;
+            mouseY.textContent = `Y: ${Math.round(e.clientY - rect.top)}`;
+        });
+
+        // Обработка скролла
+        mouseArea.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            const currentTime = Date.now();
+            if (currentTime - lastScrollTime < scrollCooldown) return;
+            lastScrollTime = currentTime;
+            
+            const scrollUpArrow = document.getElementById('scrollArrowUp');
+            const scrollDownArrow = document.getElementById('scrollArrowDown');
+            
+            if (e.deltaY > 0) {
+                scrollStatus.textContent = 'Скролл вниз';
+                highlightScrollArrow(scrollDownArrow);
+            } else {
+                scrollStatus.textContent = 'Скролл вверх';
+                highlightScrollArrow(scrollUpArrow);
+            }
+            
+            // Проверка на слишком быстрый скролл
+            if (currentTime - lastScrollTime < 50) {
+                handleMisclick(e.deltaY > 0 ? scrollDownArrow : scrollUpArrow);
+            }
+            
+            setTimeout(() => {
+                scrollStatus.textContent = '-';
+            }, 2000);
+        });
+
+        // Обработка нажатий кнопок мыши
+        mouseArea.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleMouseClick(e.button, true);
+        });
+
+        mouseArea.addEventListener('mouseup', (e) => {
+            e.preventDefault();
+            handleMouseClick(e.button, false);
+        });
+
+        // Обработка кликов на визуальной мышке
+        document.getElementById('visualLeftMouse').addEventListener('mousedown', () => handleMouseClick(0, true));
+        document.getElementById('visualLeftMouse').addEventListener('mouseup', () => handleMouseClick(0, false));
+
+        document.getElementById('visualRightMouse').addEventListener('mousedown', () => handleMouseClick(2, true));
+        document.getElementById('visualRightMouse').addEventListener('mouseup', () => handleMouseClick(2, false));
+
+        document.getElementById('visualMiddleMouse').addEventListener('mousedown', () => handleMouseClick(1, true));
+        document.getElementById('visualMiddleMouse').addEventListener('mouseup', () => handleMouseClick(1, false));
+
+        document.getElementById('visualSide1').addEventListener('mousedown', () => handleMouseClick(3, true));
+        document.getElementById('visualSide1').addEventListener('mouseup', () => handleMouseClick(3, false));
+
+        document.getElementById('visualSide2').addEventListener('mousedown', () => handleMouseClick(4, true));
+        document.getElementById('visualSide2').addEventListener('mouseup', () => handleMouseClick(4, false));
+
+        // Обработка misclick по стрелочкам
+        document.getElementById('scrollArrowUp').addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleMisclick(e.target);
+        });
+
+        document.getElementById('scrollArrowDown').addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleMisclick(e.target);
+        });
+
+        // Функция обработки кликов мыши
+        function handleMouseClick(button, isPressed) {
+            const currentTime = Date.now();
+            
+            if (isPressed) {
+                // Проверка двойного клика
+                if (currentTime - lastClickTime < doubleClickThreshold) {
+                    doubleClickCount++;
+                    doubleClicks.textContent = doubleClickCount;
+                }
+                
+                lastClickTime = currentTime;
+                clickCount++;
+                totalClicks.textContent = clickCount;
+                
+                // Пасхалка при 100 кликах
+                if (clickCount >= 100 && !easterEggShown) {
+                    showEasterEgg();
+                    easterEggShown = true;
+                }
+            }
+            
+            updateMouseButtonDisplay(button, isPressed);
+        }
+
+        // Функция обновления отображения кнопки мыши
+        function updateMouseButtonDisplay(button, isPressed) {
+            let buttonName = '';
+            let buttonElement = null;
+            
+            // Правильное сопоставление кнопок мыши:
+            switch (button) {
+                case 0: // Левая кнопка
+                    buttonName = 'LMB';
+                    buttonElement = document.getElementById('visualLeftMouse');
+                    break;
+                case 1: // Колесико (средняя кнопка)
+                    buttonName = 'Колесико';
+                    buttonElement = document.getElementById('visualMiddleMouse');
+                    break;
+                case 2: // Правая кнопка
+                    buttonName = 'RMB';
+                    buttonElement = document.getElementById('visualRightMouse');
+                    break;
+                case 3: // Боковая кнопка 1
+                    buttonName = 'Боковая 1';
+                    buttonElement = document.getElementById('visualSide1');
+                    break;
+                case 4: // Боковая кнопка 2
+                    buttonName = 'Боковая 2';
+                    buttonElement = document.getElementById('visualSide2');
+                    break;
+                default:
+                    buttonName = 'Неизвестная';
+            }
+            
+            if (isPressed) {
+                mouseButton.textContent = buttonName;
+                if (buttonElement) {
+                    buttonElement.classList.add('pressed');
+                }
+            } else {
+                mouseButton.textContent = '-';
+                if (buttonElement) {
+                    buttonElement.classList.remove('pressed');
+                    buttonElement.classList.add('fade-out');
+                    setTimeout(() => {
+                        buttonElement.classList.remove('fade-out');
+                    }, 500);
+                }
+            }
+        }
+
+        // Функция подсветки стрелки скролла
+        function highlightScrollArrow(arrow) {
+            arrow.classList.add('active');
+            setTimeout(() => {
+                arrow.classList.remove('active');
+                arrow.classList.add('fade-out');
+                setTimeout(() => {
+                    arrow.classList.remove('fade-out');
+                }, 500);
+            }, 300);
+        }
+
+        // Функция обработки misclick
+        function handleMisclick(arrow) {
+            scrollErrorCount++;
+            scrollErrors.textContent = scrollErrorCount;
+            
+            arrow.classList.add('misclick');
+            setTimeout(() => {
+                arrow.classList.remove('misclick');
+            }, 500);
+        }
+
+        // Функция пасхалки
+        function showEasterEgg() {
+            easterEgg.classList.add('active');
+            setTimeout(() => {
+                easterEgg.classList.remove('active');
+            }, 3000);
+        }
+
+        // Предотвращение контекстного меню
+        mouseArea.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // Тест микрофона с выводом звука на наушники
+        const micTestButton = document.getElementById('micTestButton');
+        const micLevel = document.getElementById('micLevel');
+        const micStatus = document.getElementById('micStatus');
+        let audioContext, microphone, destination;
+
+        micTestButton.addEventListener('click', async () => {
+            if (micTestButton.classList.contains('listening')) {
+                stopMicrophoneTest();
+            } else {
+                startMicrophoneTest();
+            }
+        });
+
+        async function startMicrophoneTest() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                microphone = audioContext.createMediaStreamSource(stream);
+                destination = audioContext.destination;
+                
+                // Подключаем микрофон напрямую к выходу (наушникам)
+                microphone.connect(destination);
+                
+                micTestButton.textContent = 'Остановить тест';
+                micTestButton.classList.add('listening');
+                micStatus.textContent = 'Говорите в микрофон - звук выводится на наушники';
+                micStatus.className = 'status success';
+                
+                // Визуализатор уровня звука
+                const analyser = audioContext.createAnalyser();
+                microphone.connect(analyser);
+                analyser.fftSize = 256;
+                
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                
+                function updateMicLevel() {
+                    if (!analyser) return;
+                    
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    let average = sum / bufferLength;
+                    
+                    micLevel.style.width = average + '%';
+                    
+                    if (micTestButton.classList.contains('listening')) {
+                        requestAnimationFrame(updateMicLevel);
+                    }
+                }
+                
+                updateMicLevel();
+                
+            } catch (error) {
+                micStatus.textContent = 'Ошибка доступа к микрофону: ' + error.message;
+                micStatus.className = 'status error';
+            }
+        }
+
+        function stopMicrophoneTest() {
+            if (microphone && destination) {
+                microphone.disconnect(destination);
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            micTestButton.textContent = 'Начать тест микрофона';
+            micTestButton.classList.remove('listening');
+            micStatus.textContent = 'Тест остановлен';
+            micStatus.className = 'status info';
+            micLevel.style.width = '0%';
+        }
+
+        // Тест наушников с реальным звуком
+        const volumeControl = document.getElementById('volumeControl');
+        const volumeValue = document.getElementById('volumeValue');
+        const audioStatus = document.getElementById('audioStatus');
+
+        volumeControl.addEventListener('input', (e) => {
+            volumeValue.textContent = e.target.value + '%';
+        });
+
+        function playTestSound(channel) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            const panner = audioContext.createStereoPanner();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 440;
+            
+            // Настройка панорамирования
+            if (channel === 'left') {
+                panner.pan.value = -1;
+                audioStatus.textContent = 'Звук в левом канале';
+            } else if (channel === 'right') {
+                panner.pan.value = 1;
+                audioStatus.textContent = 'Звук в правом канале';
+            } else {
+                panner.pan.value = 0;
+                audioStatus.textContent = 'Звук в обоих каналах (моно)';
+            }
+            
+            audioStatus.className = 'status success';
+            
+            // Настройка громкости
+            const volume = volumeControl.value / 100;
+            gainNode.gain.value = volume * 0.1;
+            
+            // Соединяем узлы
+            oscillator.connect(gainNode);
+            gainNode.connect(panner);
+            panner.connect(audioContext.destination);
+            
+            // Запускаем и останавливаем звук
+            oscillator.start();
+            setTimeout(() => {
+                oscillator.stop();
+                audioStatus.textContent = 'Тест завершен';
+                setTimeout(() => {
+                    audioStatus.textContent = 'Нажмите любую кнопку для проверки звука';
+                    audioStatus.className = 'status info';
+                }, 2000);
+            }, 1000);
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            updateKeyboardDisplay();
+            
+            // Блокировка стандартного поведения F1-F12
+            for (let i = 1; i <= 12; i++) {
+                window.addEventListener('keydown', function(e) {
+                    if (e.key === `F${i}` || e.code === `F${i}`) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
