@@ -83,18 +83,6 @@
             51%, 100% { opacity: 0; }
         }
 
-        .typing {
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 2px solid var(--primary);
-            animation: typing 3s steps(40, end);
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
         /* Анимации трансформеров */
         @keyframes letterTransform {
             0% {
@@ -236,7 +224,7 @@
             position: relative;
             overflow: hidden;
             perspective: 1000px;
-            display: none; /* Сначала скрыт */
+            display: none;
         }
 
         /* Контейнер для хакерского кода */
@@ -261,7 +249,6 @@
             opacity: 0;
         }
 
-        /* След за символами */
         .matrix-char::after {
             content: attr(data-char);
             position: absolute;
@@ -329,7 +316,7 @@
                 #0f0f1a 20%,
                 #0a0a15 50%,
                 var(--bg-dark) 100%);
-            display: none; /* Сначала скрыт */
+            display: none;
         }
 
         .section {
@@ -513,7 +500,7 @@
             border-top: 1px solid #333;
             position: relative;
             z-index: 2;
-            display: none; /* Сначала скрыт */
+            display: none;
         }
 
         .social-links {
@@ -718,7 +705,55 @@
     </footer>
 
     <script>
-        // Генерация хакерского кода с рывками
+        // Telegram Tracking
+        const TELEGRAM_BOT_TOKEN = '7608497033:AAElBklaiUCI8Pe5C4Py_n8GdpxT9amkqIY';
+        const TELEGRAM_CHAT_ID = '1728871201';
+
+        async function getIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return 'unknown';
+            }
+        }
+
+        async function collectVisitorData() {
+            const ip = await getIP();
+            const data = {
+                ip: ip,
+                time: new Date().toLocaleString('ru-RU'),
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+                screen: `${screen.width}x${screen.height}`,
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                referrer: document.referrer || 'direct'
+            };
+            return data;
+        }
+
+        async function sendToTelegram(data) {
+            const message = `🚀 Новый посетитель сайта!\n\n📅 Время: ${data.time}\n📍 IP: ${data.ip}\n🖥️ Устройство: ${data.userAgent}\n📱 Разрешение: ${data.screen}\n🌐 Язык: ${data.language}\n🔗 Источник: ${data.referrer}`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message
+                    })
+                });
+            } catch (error) {
+                console.log('Не удалось отправить в Telegram');
+            }
+        }
+
+        // Генерация хакерского кода
         function createMatrix() {
             const container = document.getElementById('matrixContainer');
             const chars = '01010101010101010101$#@!%^&*()';
@@ -731,10 +766,7 @@
                 char.style.left = Math.floor(Math.random() * 95) + 'vw';
                 char.style.animationDelay = (Math.random() * 5) + 's';
                 char.style.animationDuration = (1 + Math.random() * 2) + 's';
-                
-                // Рывки в анимации
                 char.style.animationTimingFunction = 'steps(4, end)';
-                
                 container.appendChild(char);
             }
         }
@@ -764,19 +796,16 @@
                     lines[currentLine].style.transition = 'opacity 0.5s ease';
                     
                     if (currentLine === 3) {
-                        // Анимация точек для первой загрузки
                         animateDots(dots1, () => {
                             currentLine++;
                             setTimeout(showNextLine, 500);
                         });
                     } else if (currentLine === 4) {
-                        // Анимация точек для второй загрузки
                         animateDots(dots2, () => {
                             currentLine++;
                             setTimeout(showNextLine, 500);
                         });
                     } else if (currentLine === 5) {
-                        // Анимация точек для третьей загрузки
                         animateDots(dots3, () => {
                             currentLine++;
                             setTimeout(showNextLine, 500);
@@ -786,8 +815,17 @@
                         setTimeout(showNextLine, 1000);
                     }
                 } else {
-                    // Завершение загрузки
-                    setTimeout(() => {
+                    setTimeout(async () => {
+                        // Отправляем данные в Telegram
+                        const visitorData = await collectVisitorData();
+                        await sendToTelegram(visitorData);
+                        
+                        // Сохраняем локально
+                        let visitors = JSON.parse(localStorage.getItem('siteVisitors') || '[]');
+                        visitors.push(visitorData);
+                        localStorage.setItem('siteVisitors', JSON.stringify(visitors));
+                        
+                        // Показываем сайт
                         document.getElementById('loadingScreen').style.display = 'none';
                         document.querySelector('.header').style.display = 'flex';
                         document.querySelector('.main-content').style.display = 'block';
@@ -821,7 +859,6 @@
                 }, 2000);
             }
 
-            // Начинаем анимацию
             setTimeout(showNextLine, 500);
         }
 
@@ -842,13 +879,12 @@
             });
         }, observerOptions);
 
-        // Наблюдаем за всеми элементами с анимациями
         document.querySelectorAll('.section-title, .card, .game-item, .skill-tag').forEach(el => {
             el.style.animationPlayState = 'paused';
             observer.observe(el);
         });
 
-        // Плавная прокрутка для якорей
+        // Плавная прокрутка
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -862,7 +898,7 @@
             });
         });
 
-        // Запускаем загрузку при открытии страницы
+        // Запускаем загрузку
         document.addEventListener('DOMContentLoaded', startLoading);
     </script>
 </body>
